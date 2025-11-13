@@ -122,7 +122,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         //format result to string..
         String strResult = formatResultToString(result);
         Log.d(TAG, "Format Result: " + strResult + " " + viewHolder.getRcTitle().getText().toString());
-        viewHolder.getRcExchangeRate().setText(String.format("%.2f", result));
+        viewHolder.getRcExchangeRate().setText(strResult);
 
 
 //---------Change colour depending on rate value----------------------------------------------------
@@ -144,16 +144,22 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         try {
             BigDecimal input = new BigDecimal(inputAmount);
             BigDecimal rate = new BigDecimal(strRate);
-            if (gbpToX) {
-                if (rate.compareTo(BigDecimal.ZERO) <= 0) {
-                    return BigDecimal.ZERO;
+            if(input.compareTo(BigDecimal.ZERO) <= 0 || rate.compareTo(BigDecimal.ZERO) <= 0){
+                return BigDecimal.ZERO;
+            }else {
+                if (gbpToX) {
+                    if(input.multiply(rate.setScale(2, RoundingMode.HALF_UP)).compareTo(BigDecimal.ZERO)<= 0){
+                        return BigDecimal.ZERO;
+                    }
+                    return input.multiply(rate.setScale(2, RoundingMode.HALF_UP));
+                } else {
+                    if (input.divide(rate, 2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) <= 0) {
+                        return BigDecimal.ZERO;
+
+                    } else {
+                        return input.divide(rate, 2, RoundingMode.HALF_UP);
+                    }
                 }
-                return input.multiply(rate);
-            } else {
-                if (rate.compareTo(BigDecimal.ZERO) <= 0) {
-                    return BigDecimal.ZERO;
-                }
-                return input.divide(rate, 2, RoundingMode.HALF_UP);
             }
         }
         catch(NumberFormatException e){
