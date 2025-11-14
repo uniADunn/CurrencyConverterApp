@@ -215,6 +215,17 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
     @Override
     public void onFilterToggle(boolean isChecked){
         currencyVM.setFiltered(isChecked);
-        displayRates();
+        rcAdapter.setFiltered(isChecked);
+        if(isChecked){
+            filteredRates = currencyVM.buildRateLists();
+            currencyVM.setFilteredRates(filteredRates);
+            rcAdapter.updateData(filteredRates);
+        }
+        else{
+            rates = currencyVM.getRates();
+            currencyVM.setRates(rates);
+            rcAdapter.updateData(rates);
+        }
+
     }
 }

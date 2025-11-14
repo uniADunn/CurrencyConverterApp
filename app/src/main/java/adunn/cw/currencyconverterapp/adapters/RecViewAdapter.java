@@ -126,9 +126,16 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
 
 
 //---------Change colour depending on rate value----------------------------------------------------
-//        if(Float.parseFloat(viewHolder.getRcRate().getText().toString()) < 3){
-//            viewHolder.getRecViewLayout().setBackgroundColor(viewHolder.itemView.getResources().getColor(R.color.red));
-//        }
+        if(Float.parseFloat(viewHolder.getRcRate().getText().toString()) <= 3){
+            viewHolder.getRecViewLayout().setBackgroundColor(viewHolder.itemView.getResources().getColor(R.color.pastel_red, null));
+        }
+        else if(Float.parseFloat(viewHolder.getRcRate().getText().toString()) > 3 &&
+        Float.parseFloat(viewHolder.getRcRate().getText().toString()) <= 9){
+            viewHolder.getRecViewLayout().setBackgroundColor(viewHolder.itemView.getResources().getColor(R.color.yellow, null));
+        }
+        else{
+            viewHolder.getRecViewLayout().setBackgroundColor(viewHolder.itemView.getResources().getColor(R.color.pastel_green, null));
+        }
 //---------------------------------------------------------------------------------------------------
     }
     private String formatResultToString(BigDecimal result){
