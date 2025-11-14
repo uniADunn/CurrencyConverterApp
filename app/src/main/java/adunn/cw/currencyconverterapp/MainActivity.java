@@ -146,6 +146,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
                                         "Rates Updated",
                                         Toast.LENGTH_SHORT)
                                 .show();
+                        currencyVM.buildRateLists();
                         displayRates();
                     }
 
@@ -176,6 +177,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
 
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
         rcAdapter.setGbpToX(currencyVM.isGbpToX());
+        rcAdapter.setFiltered(currencyVM.isFiltered());
 
     }
     //ON START
@@ -183,6 +185,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
     public void onStart(){
         super.onStart();
         rates = currencyVM.getRates();
+        filteredRates = currencyVM.buildRateLists();
         filteredRates = currencyVM.getFilteredRates();
         lastPublished = currencyVM.getLastPublished();
         rawDataDisplay.setText("Last Updated: " + lastPublished);
@@ -214,7 +217,18 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
     }
     @Override
     public void onFilterToggle(boolean isChecked){
+        Toast.makeText(getApplicationContext(), "Filter Type Changed", Toast.LENGTH_SHORT).show();
         currencyVM.setFiltered(isChecked);
-        displayRates();
+        currencyVM.buildRateLists();
+        if(isChecked) {
+            filteredRates = currencyVM.getFilteredRates();
+            rcAdapter.updateData(filteredRates);
+            rcAdapter.setFiltered(isChecked);
+        }else{
+            rcAdapter.updateData(currencyVM.getRates());
+        }
+
+
+
     }
 }
