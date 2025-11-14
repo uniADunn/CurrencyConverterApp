@@ -1,10 +1,14 @@
 package adunn.cw.currencyconverterapp;
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,8 +51,8 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
     private RecViewAdapter rcAdapter;
     private RssFeedData rssData;
     private String lastPublished;
-    private ArrayList<CurrencyRate> rates;
-    private ArrayList<CurrencyRate> filteredRates;
+//    private ArrayList<CurrencyRate> rates;
+//    private ArrayList<CurrencyRate> filteredRates;
     //viewmodels
     private CurrencyViewModel currencyVM;
     private Fragment inputAmountFrag;
@@ -72,7 +76,7 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
         //create handler for updating the ui
         createUpdateUIHandler();
         //create recycler view adapter
-        rcAdapter = new RecViewAdapter();
+        rcAdapter = new RecViewAdapter(currencyVM);
         //create layout manager
         createRCViewLayoutManager();
         //check for currency data
@@ -182,19 +186,23 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
     @Override
     public void onStart(){
         super.onStart();
-        rates = currencyVM.getRates();
-        filteredRates = currencyVM.getFilteredRates();
-        lastPublished = currencyVM.getLastPublished();
-        rawDataDisplay.setText("Last Updated: " + lastPublished);
-        displayRates();
+        if(currencyVM.getRates() == null){
+            updateRssData();
+        }
+        else{
+            ArrayList<CurrencyRate> rates = currencyVM.getRates();
+            lastPublished = currencyVM.getLastPublished();
+            rawDataDisplay.setText("Last Updated: ".toUpperCase() + lastPublished);
+
+            rcAdapter.updateData(rates);
+        }
 
     }
     public void displayRates(){
-        rcAdapter.updateData(currencyVM.getRates());
+        rcAdapter.updateData(currencyVM.buildRateLists());
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
         //rcAdapter.setGbpToX(currencyVM.isGbpToX());
     }
-
     @Override
     public void onClick(View v){
     }
@@ -206,21 +214,32 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
     @Override
     public void onConversionToggle(boolean isChecked){
         currencyVM.setGbpToX(isChecked);
-        rcAdapter.setGbpToX(isChecked);
+        rcAdapter.notifyDataSetChanged();
     }
     @Override
     public void onFilterToggle(boolean isChecked){
+        //set currency view model filter (true or false)
         currencyVM.setFiltered(isChecked);
-        rcAdapter.setFiltered(isChecked);
-        if(isChecked){
-            filteredRates = currencyVM.buildRateLists();
-            currencyVM.setFilteredRates(filteredRates);
-            rcAdapter.updateData(filteredRates);
+        //rcAdapter.setFiltered(isChecked);
+        //check if rates are null
+        if(currencyVM.getRates() == null){
+            //update rss data to get rates
+            updateRssData();
         }
+        //rates are populated
         else{
-            rates = currencyVM.buildRateLists();
-            currencyVM.setRates(rates);
-            rcAdapter.updateData(rates);
+            ArrayList<CurrencyRate> rates;
+            if(isChecked){
+                rates = currencyVM.buildRateLists();
+                currencyVM.setFilteredRates(rates);
+                rcAdapter.updateData(rates);
+            }
+            else{
+                rates = currencyVM.buildRateLists();
+                currencyVM.setRates(rates);
+                rcAdapter.updateData(rates);
+            }
+
         }
 
     }

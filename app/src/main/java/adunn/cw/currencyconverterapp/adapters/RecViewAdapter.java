@@ -28,10 +28,10 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
     private static final String TAG = "RecViewAdapter";
     private ArrayList<CurrencyRate> dataSet; //container for data in the recycler view
     private String inputAmount;//amount entered by user
-    private boolean gbpToX;
-    private boolean filtered;
+    private CurrencyViewModel currencyVM; //access to the view model
 
-    public RecViewAdapter(){
+    public RecViewAdapter(CurrencyViewModel vm){
+        currencyVM = vm;
         dataSet = new ArrayList<>();
         setHasStableIds(true);
     }
@@ -49,14 +49,6 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         notifyDataSetChanged();
 
     }
-    public void setGbpToX(boolean gbpTo) {
-        this.gbpToX = gbpTo;
-        notifyDataSetChanged();
-    }
-    public void setFiltered(boolean filtered){
-        this.filtered = filtered;
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView rcTitle;
         private final TextView rcRate;
@@ -70,7 +62,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
                 @Override
                 public void onClick(View v){
                     Log.d(TAG, "Element " + getAbsoluteAdapterPosition()+ " clicked");
-                    //will trigger the converter (i think)
+                    //will trigger the converter (i think) inflate new fragment
                 }
             });
             rcTitle = v.findViewById(R.id.rcTitle);
@@ -151,14 +143,13 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         }
     }
     private BigDecimal calculateRate(String inputAmount, String strRate){
-
         try {
             BigDecimal input = new BigDecimal(inputAmount);
             BigDecimal rate = new BigDecimal(strRate);
             if(input.compareTo(BigDecimal.ZERO) <= 0 || rate.compareTo(BigDecimal.ZERO) <= 0){
                 return BigDecimal.ZERO;
             }else {
-                if (gbpToX) {
+                if (currencyVM.isGbpToX()) {
                     if(input.multiply(rate.setScale(2, RoundingMode.HALF_UP)).compareTo(BigDecimal.ZERO)<= 0){
                         return BigDecimal.ZERO;
                     }
@@ -177,7 +168,6 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
             Log.e(TAG, "NumberFormatException: " + e.getMessage());
             return BigDecimal.ZERO;
         }
-
     }
     //return the size of your dataset
     @Override
