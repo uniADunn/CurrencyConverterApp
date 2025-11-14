@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.math.BigDecimal;
@@ -16,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
+import adunn.cw.currencyconverterapp.MainActivity;
 import adunn.cw.currencyconverterapp.R;
 import adunn.cw.currencyconverterapp.rsscurrency.CurrencyRate;
+import adunn.cw.currencyconverterapp.viewmodels.CurrencyViewModel;
 
 public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHolder> {
     private static final String TAG = "RecViewAdapter";
@@ -25,6 +30,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
     private String inputAmount;//amount entered by user
     private boolean gbpToX;
     private boolean filtered;
+
     public RecViewAdapter(){
         dataSet = new ArrayList<>();
         setHasStableIds(true);
@@ -33,12 +39,6 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
     public long getItemId(int position){
         String code = dataSet.get(position).getCountryCode();
         return code == null ? position : code.hashCode();
-    }
-    public void setFiltered(boolean filtered){
-        this.filtered = filtered;
-    }
-    public boolean getFiltered(){
-        return filtered;
     }
     public void updateData(ArrayList<CurrencyRate> rates) {
         dataSet = rates != null ? rates : new ArrayList<>();
@@ -52,6 +52,9 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
     public void setGbpToX(boolean gbpTo) {
         this.gbpToX = gbpTo;
         notifyDataSetChanged();
+    }
+    public void setFiltered(boolean filtered){
+        this.filtered = filtered;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -91,6 +94,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         public ConstraintLayout getRecViewLayout(){
             return recViewLayout;
         }
+
     }
     /**
      * Initialize the dataset of the Adapter.

@@ -15,7 +15,7 @@ public class CurrencyViewModel extends ViewModel {
     private String inputAmount;//user input amount
     private final MutableLiveData<String> inputAmountLive = new MutableLiveData<>();//live user input data
     private boolean gbpToX = true;//true if GBP to X (false if X to GBP)
-    private boolean isFiltered; //true if filtered
+    private boolean isFiltered = false; //true if filtered
 
     public ArrayList<CurrencyRate> buildRateLists(){
         Log.d("currency view model", "buildRateLists: building Rates...");

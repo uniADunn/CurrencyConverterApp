@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import adunn.cw.currencyconverterapp.R;
 import adunn.cw.currencyconverterapp.viewmodels.CurrencyViewModel;
 
-public class InputAmountFragment extends Fragment {
+public class InputControlFragment extends Fragment {
     public interface onAmountListener {
         void onAmount(String amount);
     }
@@ -34,7 +33,8 @@ public class InputAmountFragment extends Fragment {
     private CurrencyViewModel currencyVM;
     private boolean updatingFromVM = false;
 
-    public InputAmountFragment() {}//required empty public constructor
+    public InputControlFragment() {}//required empty public constructor
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.input_amount_layout, container, false);
@@ -42,6 +42,8 @@ public class InputAmountFragment extends Fragment {
         setWidgets(v);
         setListeners(v);
         txtAmount.setText(currencyVM.getInputAmount());
+        currencyVM.setGbpToX(convertToggle.isChecked());
+        currencyVM.setFiltered(filterToggle.isChecked());
 
         observeVM();
         watchInputText();
@@ -68,12 +70,13 @@ public class InputAmountFragment extends Fragment {
         //conversion toggle
         convertToggle = v.findViewById(R.id.toggleConversion);
         convertToggle.setChecked(true);
-        currencyVM.setGbpToX(convertToggle.isChecked());
-
         //filter toggle
         filterToggle = v.findViewById(R.id.toggleFilter);
         filterToggle.setChecked(false);
+        //set view model fields
+        currencyVM.setGbpToX(convertToggle.isChecked());
         currencyVM.setFiltered(filterToggle.isChecked());
+
 
         //amount input EditText
         txtAmount = v.findViewById(R.id.txtAmount);

@@ -29,14 +29,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import adunn.cw.currencyconverterapp.adapters.RecViewAdapter;
-import adunn.cw.currencyconverterapp.fragments.InputAmountFragment;
+import adunn.cw.currencyconverterapp.fragments.InputControlFragment;
 import adunn.cw.currencyconverterapp.rsscurrency.CurrencyRate;
 import adunn.cw.currencyconverterapp.rsscurrency.RssFeedData;
 import adunn.cw.currencyconverterapp.threads.RSSCurrency;
 import adunn.cw.currencyconverterapp.viewmodels.CurrencyViewModel;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
+InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
 
     private Handler updateUIHandler = null;
     private final static int RSS_FEED_DATA_UPDATE = 1;
@@ -98,7 +98,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
         return true;
     }
     private void createFragments(){
-        inputAmountFrag = new InputAmountFragment();
+        inputAmountFrag = new InputControlFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction =  manager.beginTransaction();
         transaction.add(R.id.fragment_container, inputAmountFrag);
@@ -175,7 +175,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
         rcRates.setAdapter(rcAdapter);
 
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
-        rcAdapter.setGbpToX(currencyVM.isGbpToX());
+        //rcAdapter.setGbpToX(currencyVM.isGbpToX());
 
     }
     //ON START
@@ -192,20 +192,16 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
     public void displayRates(){
         rcAdapter.updateData(currencyVM.getRates());
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
-        rcAdapter.setGbpToX(currencyVM.isGbpToX());
-        rcAdapter.setFiltered(currencyVM.isFiltered());
+        //rcAdapter.setGbpToX(currencyVM.isGbpToX());
     }
 
     @Override
     public void onClick(View v){
-//        if(v == startButton){
-//            updateRssData();
-//        }
     }
     @Override
     public void onAmount(String amount){
             currencyVM.setInputAmount(amount);
-            displayRates();
+            rcAdapter.setInputAmount(amount);
     }
     @Override
     public void onConversionToggle(boolean isChecked){
@@ -222,7 +218,7 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
             rcAdapter.updateData(filteredRates);
         }
         else{
-            rates = currencyVM.getRates();
+            rates = currencyVM.buildRateLists();
             currencyVM.setRates(rates);
             rcAdapter.updateData(rates);
         }
