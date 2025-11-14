@@ -223,7 +223,6 @@ InputAmountFragment.onAmountListener, InputAmountFragment.onToggleListener {
         if(isChecked) {
             filteredRates = currencyVM.getFilteredRates();
             rcAdapter.updateData(filteredRates);
-            rcAdapter.setFiltered(isChecked);
         }else{
             rcAdapter.updateData(currencyVM.getRates());
         }
