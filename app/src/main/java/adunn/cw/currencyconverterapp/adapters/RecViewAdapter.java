@@ -121,7 +121,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         BigDecimal result = calculateRate(inputAmount, dataSet.get(position).getStrRate());
         //format result to string..
         String strResult = formatResultToString(result);
-        Log.d(TAG, "Format Result: " + strResult + " " + viewHolder.getRcTitle().getText().toString());
+        //Log.d(TAG, "Format Result: " + strResult + " " + viewHolder.getRcTitle().getText().toString());
         viewHolder.getRcExchangeRate().setText(strResult);
 
 

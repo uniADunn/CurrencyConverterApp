@@ -1,5 +1,7 @@
 package adunn.cw.currencyconverterapp.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
@@ -13,9 +15,10 @@ public class CurrencyViewModel extends ViewModel {
     private String inputAmount;//user input amount
     private final MutableLiveData<String> inputAmountLive = new MutableLiveData<>();//live user input data
     private boolean gbpToX = true;//true if GBP to X (false if X to GBP)
-    private boolean isFiltered = false; //true if filtered
+    private boolean isFiltered; //true if filtered
 
     public ArrayList<CurrencyRate> buildRateLists(){
+        Log.d("currency view model", "buildRateLists: building Rates...");
         //get rates if null: new list
         ArrayList<CurrencyRate> allRates = (rates != null) ? rates : new ArrayList<>();
         //list to hold filtered rates
@@ -24,7 +27,7 @@ public class CurrencyViewModel extends ViewModel {
         //view rates is filtered
         if(isFiltered){
             for(CurrencyRate r : allRates){
-                String code = r.getCountryCode();
+                String code = r.getCountryCode().toUpperCase();
                 if("USD".equals(code) || "EUR".equals(code) || "JPY".equals(code)){
                     outRates.add(r);
                 }
@@ -35,6 +38,7 @@ public class CurrencyViewModel extends ViewModel {
                 String c2 = r2.getCountryCode() == null ? "" : r2.getCountryCode();
                 return c1.compareTo(c2);
             });
+            setFilteredRates(outRates);
             return outRates;
         }
         else{
@@ -43,6 +47,7 @@ public class CurrencyViewModel extends ViewModel {
                 String c2 = r1.getCountryCode() == null ? "" : r2.getCountryCode();
                 return c1.compareTo(c2);
             });
+            rates = allRates;
             return allRates;
         }
 

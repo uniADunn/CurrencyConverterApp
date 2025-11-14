@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class InputAmountFragment extends Fragment {
         setWidgets(v);
         setListeners(v);
         txtAmount.setText(currencyVM.getInputAmount());
+
         observeVM();
         watchInputText();
         return v;
@@ -58,7 +60,6 @@ public class InputAmountFragment extends Fragment {
         filterToggle.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(@NonNull CompoundButton filterToggle, boolean isChecked){
-                //Toast.makeText(getContext(), "Filter Type Changed", Toast.LENGTH_SHORT).show();
                 toggleListener.onFilterToggle(isChecked);
             }
         });
@@ -67,9 +68,13 @@ public class InputAmountFragment extends Fragment {
         //conversion toggle
         convertToggle = v.findViewById(R.id.toggleConversion);
         convertToggle.setChecked(true);
+        currencyVM.setGbpToX(convertToggle.isChecked());
+
         //filter toggle
         filterToggle = v.findViewById(R.id.toggleFilter);
-        convertToggle.setChecked(true);
+        filterToggle.setChecked(false);
+        currencyVM.setFiltered(filterToggle.isChecked());
+
         //amount input EditText
         txtAmount = v.findViewById(R.id.txtAmount);
         if(currencyVM.getInputAmount() != null){
