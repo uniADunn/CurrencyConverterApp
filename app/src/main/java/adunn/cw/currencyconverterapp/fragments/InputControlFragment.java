@@ -18,15 +18,15 @@ import adunn.cw.currencyconverterapp.R;
 import adunn.cw.currencyconverterapp.viewmodels.CurrencyViewModel;
 
 public class InputControlFragment extends Fragment {
-    public interface onAmountListener {
+    public interface OnAmountListener {
         void onAmount(String amount);
     }
-    public interface onToggleListener {
+    public interface OnToggleListener {
         void onConversionToggle(boolean isChecked);
         void onFilterToggle(boolean isChecked);
     }
-    private onAmountListener listener;
-    private onToggleListener toggleListener;
+    private OnAmountListener listener;
+    private OnToggleListener toggleListener;
     private EditText txtAmount;
     private ToggleButton convertToggle;
     private ToggleButton filterToggle;
@@ -46,7 +46,7 @@ public class InputControlFragment extends Fragment {
         currencyVM.setFiltered(filterToggle.isChecked());
 
         observeVM();
-        watchInputText();
+        watchInputAmount();
         return v;
     }
     private void setListeners(View v){
@@ -90,7 +90,7 @@ public class InputControlFragment extends Fragment {
     public void observeVM(){
         currencyVM.getInputAmountLive().observe(getViewLifecycleOwner(), amount->{
             if(amount == null || amount.equals("0")){
-                amount = "Enter Amount";
+                txtAmount.setHint("Enter Amount");
             }
             String currentString = txtAmount.getText().toString();
             if(!currentString.equals(amount)){
@@ -101,7 +101,7 @@ public class InputControlFragment extends Fragment {
             }
         });
     }
-    public void watchInputText(){
+    public void watchInputAmount(){
         txtAmount.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -119,15 +119,15 @@ public class InputControlFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context){
         super.onAttach(context);
-        if(context instanceof onAmountListener ){
-            listener = (onAmountListener ) context;
+        if(context instanceof OnAmountListener ){
+            listener = (OnAmountListener ) context;
         }
         else{
             throw new RuntimeException(context + "Must implement onAmountListener");
         }
 
-        if(context instanceof onToggleListener){
-            toggleListener = (onToggleListener) context;
+        if(context instanceof OnToggleListener){
+            toggleListener = (OnToggleListener) context;
         }
         else{
             throw new RuntimeException(context + "Must implement onConversionToggleListener");

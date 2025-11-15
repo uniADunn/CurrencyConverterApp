@@ -13,7 +13,9 @@ public class CurrencyViewModel extends ViewModel {
     private ArrayList<CurrencyRate> filteredRates; // holds filtered rates
     private String lastPublished;//last published date
     private String inputAmount;//user input amount
-    private final MutableLiveData<String> inputAmountLive = new MutableLiveData<>();//live user input data
+    private String inputSearch; // user query input
+    private final MutableLiveData<String> inputSearchLive = new MutableLiveData<>();//live user input data: query
+    private final MutableLiveData<String> inputAmountLive = new MutableLiveData<>();//live user input data: amount
     private boolean gbpToX = true;//true if GBP to X (false if X to GBP)
     private boolean isFiltered = false; //true if filtered
 
@@ -56,9 +58,6 @@ public class CurrencyViewModel extends ViewModel {
     public void setFiltered(boolean isFiltered){
         this.isFiltered = isFiltered;
     }
-    public boolean isFiltered(){
-        return isFiltered;
-    }
     public void setGbpToX(boolean gbpTo){
         this.gbpToX = gbpTo;
     }
@@ -67,9 +66,6 @@ public class CurrencyViewModel extends ViewModel {
     }
     public void setFilteredRates(ArrayList<CurrencyRate> filteredRates){
         this.filteredRates = filteredRates;
-    }
-    public ArrayList<CurrencyRate> getFilteredRates(){
-        return filteredRates;
     }
     public void setRates(ArrayList<CurrencyRate> rates){
         this.rates = rates;
@@ -80,6 +76,9 @@ public class CurrencyViewModel extends ViewModel {
     public void setInputAmount(String inputAmount){
         this.inputAmount = inputAmount;
     }
+    public void setInputSearch(String inputSearch){
+        this.inputSearch = inputSearch;
+    }
     public ArrayList<CurrencyRate> getRates(){
         return rates;
     }
@@ -89,10 +88,13 @@ public class CurrencyViewModel extends ViewModel {
     public String getInputAmount(){
         return inputAmount;
     }
+    public String getInputSearch(){
+        return inputSearch;
+    }
+    public MutableLiveData<String> getInputSearchLive(){
+        return inputSearchLive;
+    }
     public MutableLiveData<String> getInputAmountLive(){
         return inputAmountLive;
-    }
-    public void setInputAmountLive(String inputAmount) {
-        inputAmountLive.setValue(inputAmount);
     }
 }

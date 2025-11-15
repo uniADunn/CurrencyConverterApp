@@ -34,13 +34,14 @@ import java.util.ArrayList;
 
 import adunn.cw.currencyconverterapp.adapters.RecViewAdapter;
 import adunn.cw.currencyconverterapp.fragments.InputControlFragment;
+import adunn.cw.currencyconverterapp.fragments.SearchFragment;
 import adunn.cw.currencyconverterapp.rsscurrency.CurrencyRate;
 import adunn.cw.currencyconverterapp.rsscurrency.RssFeedData;
 import adunn.cw.currencyconverterapp.threads.RSSCurrency;
 import adunn.cw.currencyconverterapp.viewmodels.CurrencyViewModel;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
-InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
+InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, SearchFragment.OnSearchListener{
 
     private Handler updateUIHandler = null;
     private final static int RSS_FEED_DATA_UPDATE = 1;
@@ -51,11 +52,11 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
     private RecViewAdapter rcAdapter;
     private RssFeedData rssData;
     private String lastPublished;
-//    private ArrayList<CurrencyRate> rates;
-//    private ArrayList<CurrencyRate> filteredRates;
+    private boolean showSearch = false;
     //viewmodels
     private CurrencyViewModel currencyVM;
-    private Fragment inputAmountFrag;
+    //fragments
+    private Fragment inputAmountFrag, inputSearchFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +99,40 @@ InputControlFragment.onAmountListener, InputControlFragment.onToggleListener {
         return true;
     }
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(@NonNull MenuItem item){
+        if (item.getItemId() == R.id.action_search) {
+            if(!showSearch){
+                showSearch = true;
+            }
+            else{
+                showSearch = false;
+            }
+            showSearchFragment(showSearch);
+        }
         return true;
+    }
+    //show search fragment
+    private void showSearchFragment(boolean showSearch){
+        if(showSearch) {
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.searchFragment_container, inputSearchFrag);
+            transaction.commit();
+        }
+        else{
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.searchFragment_container, new Fragment());
+            transaction.commit();
+        }
+    }
+    @Override
+    public void onSearch(String query){
+
     }
     private void createFragments(){
         inputAmountFrag = new InputControlFragment();
+        inputSearchFrag = new SearchFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction =  manager.beginTransaction();
         transaction.add(R.id.fragment_container, inputAmountFrag);

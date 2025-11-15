@@ -4,17 +4,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:paddingVertical="2dp"
 
-
-    android:paddingTop="5dp"
-    android:paddingHorizontal="2dp">
+    >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recViewLayout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:paddingTop="5dp"
+        android:paddingHorizontal="2dp"
+        android:paddingVertical="20dp"
+        >
 
 
         <TextView
@@ -24,7 +28,6 @@
             android:text="Code"
             android:textStyle="bold"
             android:textSize="30sp"
-
             android:textAlignment="center"
             android:paddingHorizontal="2dp"
             app:layout_constraintTop_toTopOf="parent"
