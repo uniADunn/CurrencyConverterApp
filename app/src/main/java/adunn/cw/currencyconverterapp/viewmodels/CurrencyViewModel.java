@@ -23,7 +23,7 @@ public class CurrencyViewModel extends ViewModel {
 
     public ArrayList<CurrencyRate> buildRateLists(){
         Log.d("currency view model", "buildRateLists: building Rates...");
-        //get rates if null: new list
+
         ArrayList<CurrencyRate> allRates = (rates != null) ? rates : new ArrayList<>();
         // Start with a list of all rates, or just the common rates if the filter is on
         ArrayList<CurrencyRate> intermediateList = new ArrayList<>();
@@ -38,7 +38,6 @@ public class CurrencyViewModel extends ViewModel {
             intermediateList.addAll(allRates);
         }
 
-        // Now, if there is a search query, filter the intermediate list
         if (inputSearch != null && !inputSearch.isEmpty()) {
             ArrayList<CurrencyRate> outRates = new ArrayList<>();
             String lowerCaseQuery = inputSearch.toLowerCase();
@@ -53,7 +52,7 @@ public class CurrencyViewModel extends ViewModel {
             return outRates;
         }
 
-        // Otherwise, return the sorted intermediate list
+
         sortRatesByCountryCode(intermediateList);
         return intermediateList;
     }

@@ -232,7 +232,6 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     }
     @Override
     public void onFilterToggle(boolean isChecked){
-        //if a search is active, clear it and hide the search fragment
         if (currencyVM.getInputSearch() != null && !currencyVM.getInputSearch().isEmpty()) {
             currencyVM.setInputSearch(null);
             if (showSearch) {
