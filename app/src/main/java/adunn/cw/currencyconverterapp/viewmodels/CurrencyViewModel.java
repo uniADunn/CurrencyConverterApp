@@ -1,12 +1,12 @@
 package adunn.cw.currencyconverterapp.viewmodels;
-
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
-import adunn.cw.currencyconverterapp.rsscurrency.CurrencyRate;
+import java.util.Locale;
 
+import adunn.cw.currencyconverterapp.rsscurrency.CurrencyRate;
 public class CurrencyViewModel extends ViewModel {
 
     private ArrayList<CurrencyRate> rates;//hold rates
@@ -18,43 +18,41 @@ public class CurrencyViewModel extends ViewModel {
     private final MutableLiveData<String> inputAmountLive = new MutableLiveData<>();//live user input data: amount
     private boolean gbpToX = true;//true if GBP to X (false if X to GBP)
     private boolean isFiltered = false; //true if filtered
-
     public ArrayList<CurrencyRate> buildRateLists(){
         Log.d("currency view model", "buildRateLists: building Rates...");
-        //get rates if null: new list
         ArrayList<CurrencyRate> allRates = (rates != null) ? rates : new ArrayList<>();
-        //list to hold filtered rates
         ArrayList<CurrencyRate> outRates = new ArrayList<>();
-
-        //view rates is filtered
-        if(isFiltered){
-            for(CurrencyRate r : allRates){
+        if (isFiltered) {
+            for (CurrencyRate r : allRates) {
                 String code = r.getCountryCode().toUpperCase();
-                if("USD".equals(code) || "EUR".equals(code) || "JPY".equals(code)){
+                if ("USD".equals(code) || "EUR".equals(code) || "JPY".equals(code)) {
                     outRates.add(r);
                 }
             }
-            //sort rates by country code
-            outRates.sort((r1, r2)->{
-                String c1 = r1.getCountryCode() == null ? "" : r1.getCountryCode();
-                String c2 = r2.getCountryCode() == null ? "" : r2.getCountryCode();
-                return c1.compareTo(c2);
-            });
-            setFilteredRates(outRates);
-            return outRates;
+        } else {
+            outRates.addAll(allRates);
         }
-        else{
-            allRates.sort((r1, r2)->{
-                String c1 = r1.getCountryCode() == null ? "" : r1.getCountryCode();
-                String c2 = r1.getCountryCode() == null ? "" : r2.getCountryCode();
-                return c1.compareTo(c2);
-            });
-            rates = allRates;
-            return allRates;
+        if (inputSearch != null && !inputSearch.isEmpty()) {
+            String lowerCaseQuery = inputSearch.toLowerCase();
+            for (CurrencyRate r : outRates) {
+                String title = r.getTitle().toLowerCase();
+                String code = r.getCountryCode().toLowerCase();
+                if (title.contains(lowerCaseQuery) || code.contains(lowerCaseQuery)) {
+                    outRates.add(r);
+                }
+            }
+            return sortRatesByCountryCode(outRates);
         }
-
+        return sortRatesByCountryCode(outRates);
     }
-
+    private ArrayList<CurrencyRate> sortRatesByCountryCode(ArrayList<CurrencyRate> rates){
+        rates.sort((r1,r2)->{
+            String c1 = r1.getCountryCode() == null ? "" : r1.getCountryCode();
+            String c2 = r1.getCountryCode() == null ? "" : r2.getCountryCode();
+            return c1.compareTo(c2);
+        });
+        return rates;
+    }
     public void setFiltered(boolean isFiltered){
         this.isFiltered = isFiltered;
     }
@@ -63,9 +61,6 @@ public class CurrencyViewModel extends ViewModel {
     }
     public boolean isGbpToX(){
         return gbpToX;
-    }
-    public void setFilteredRates(ArrayList<CurrencyRate> filteredRates){
-        this.filteredRates = filteredRates;
     }
     public void setRates(ArrayList<CurrencyRate> rates){
         this.rates = rates;

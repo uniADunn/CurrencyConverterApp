@@ -1,21 +1,16 @@
 package adunn.cw.currencyconverterapp;
 
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,9 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
-
 import adunn.cw.currencyconverterapp.adapters.RecViewAdapter;
 import adunn.cw.currencyconverterapp.fragments.InputControlFragment;
 import adunn.cw.currencyconverterapp.fragments.SearchFragment;
@@ -101,11 +94,10 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         if (item.getItemId() == R.id.action_search) {
+            showSearch = !showSearch;
             if(!showSearch){
-                showSearch = true;
-            }
-            else{
-                showSearch = false;
+                currencyVM.setInputSearch(null);
+                displayRates();
             }
             showSearchFragment(showSearch);
         }
@@ -113,23 +105,17 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     }
     //show search fragment
     private void showSearchFragment(boolean showSearch){
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
         if(showSearch) {
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.searchFragment_container, inputSearchFrag);
-            transaction.commit();
         }
         else{
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.searchFragment_container, new Fragment());
-            transaction.commit();
+            transaction.remove(inputSearchFrag);
         }
+        transaction.commit();
     }
-    @Override
-    public void onSearch(String query){
 
-    }
     private void createFragments(){
         inputAmountFrag = new InputControlFragment();
         inputSearchFrag = new SearchFragment();
@@ -141,10 +127,8 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     }
     // SET WIDGETS
     private void setWidgets(){
+        //Sets the last published date from fx exchange rss
         rawDataDisplay = findViewById(R.id.rawDataDisplay);
-        //startButton = findViewById(R.id.startButton);
-        //set button listener
-        //startButton.setOnClickListener(this);
         //recycler view
         rcRates = findViewById(R.id.rcRates);
     }
@@ -223,7 +207,6 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
             ArrayList<CurrencyRate> rates = currencyVM.getRates();
             lastPublished = currencyVM.getLastPublished();
             rawDataDisplay.setText("Last Updated: ".toUpperCase() + lastPublished);
-
             rcAdapter.updateData(rates);
         }
 
@@ -231,7 +214,8 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     public void displayRates(){
         rcAdapter.updateData(currencyVM.buildRateLists());
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
-        //rcAdapter.setGbpToX(currencyVM.isGbpToX());
+        rcAdapter.setInputSearch(currencyVM.getInputSearch());
+
     }
     @Override
     public void onClick(View v){
@@ -248,29 +232,26 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     }
     @Override
     public void onFilterToggle(boolean isChecked){
-        //set currency view model filter (true or false)
+        //if a search is active, clear it and hide the search fragment
+        if (currencyVM.getInputSearch() != null && !currencyVM.getInputSearch().isEmpty()) {
+            currencyVM.setInputSearch(null);
+            if (showSearch) {
+                showSearch = false;
+                showSearchFragment(false);
+            }
+        }
         currencyVM.setFiltered(isChecked);
-        //rcAdapter.setFiltered(isChecked);
-        //check if rates are null
         if(currencyVM.getRates() == null){
-            //update rss data to get rates
             updateRssData();
         }
-        //rates are populated
         else{
-            ArrayList<CurrencyRate> rates;
-            if(isChecked){
-                rates = currencyVM.buildRateLists();
-                currencyVM.setFilteredRates(rates);
-                rcAdapter.updateData(rates);
-            }
-            else{
-                rates = currencyVM.buildRateLists();
-                currencyVM.setRates(rates);
-                rcAdapter.updateData(rates);
-            }
-
+            displayRates();
         }
-
+    }
+    @Override
+    public void onSearch(String query){
+        currencyVM.setInputSearch(query);
+        ArrayList<CurrencyRate> rates = currencyVM.buildRateLists();
+        rcAdapter.updateData(rates);
     }
 }
