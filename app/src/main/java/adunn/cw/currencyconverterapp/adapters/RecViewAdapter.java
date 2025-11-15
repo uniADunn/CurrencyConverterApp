@@ -28,6 +28,7 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
     private static final String TAG = "RecViewAdapter";
     private ArrayList<CurrencyRate> dataSet; //container for data in the recycler view
     private String inputAmount;//amount entered by user
+    private String query;//search query entered by user
     private CurrencyViewModel currencyVM; //access to the view model
 
     public RecViewAdapter(CurrencyViewModel vm){
@@ -48,6 +49,10 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.ViewHold
         inputAmount = amount != null ? amount : "";
         notifyDataSetChanged();
 
+    }
+    public void setInputSearch(String query){
+        this.query = query != null ? query : "";
+        notifyDataSetChanged();
     }
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView rcTitle;

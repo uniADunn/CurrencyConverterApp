@@ -106,6 +106,9 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
             }
             else{
                 showSearch = false;
+                currencyVM.setInputSearch(null);
+                displayRates();
+
             }
             showSearchFragment(showSearch);
         }
@@ -122,14 +125,13 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
         else{
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.searchFragment_container, new Fragment());
+            transaction.remove(inputSearchFrag);
             transaction.commit();
+            currencyVM.setInputSearch("");
+            rcAdapter.setInputSearch(currencyVM.getInputSearch());
         }
     }
-    @Override
-    public void onSearch(String query){
 
-    }
     private void createFragments(){
         inputAmountFrag = new InputControlFragment();
         inputSearchFrag = new SearchFragment();
@@ -231,7 +233,8 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
     public void displayRates(){
         rcAdapter.updateData(currencyVM.buildRateLists());
         rcAdapter.setInputAmount(currencyVM.getInputAmount());
-        //rcAdapter.setGbpToX(currencyVM.isGbpToX());
+        rcAdapter.setInputSearch(currencyVM.getInputSearch());
+
     }
     @Override
     public void onClick(View v){
@@ -269,8 +272,12 @@ InputControlFragment.OnAmountListener, InputControlFragment.OnToggleListener, Se
                 currencyVM.setRates(rates);
                 rcAdapter.updateData(rates);
             }
-
         }
-
+    }
+    @Override
+    public void onSearch(String query){
+        currencyVM.setInputSearch(query);
+        ArrayList<CurrencyRate> rates = currencyVM.buildRateLists();
+        rcAdapter.updateData(rates);
     }
 }

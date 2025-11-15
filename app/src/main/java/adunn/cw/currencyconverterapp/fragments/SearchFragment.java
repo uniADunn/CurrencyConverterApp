@@ -28,7 +28,7 @@ public class SearchFragment extends Fragment {
         View v = inflater.inflate(R.layout.search_layout, container, false);
         currencyVM = new ViewModelProvider(requireActivity()).get(CurrencyViewModel.class);
         setWidgets(v);
-        setListeners(v);
+        //setListeners(v);
         inputSearch.setText(currencyVM.getInputSearch());
         observeVM();
         watchInputSearch();
@@ -44,9 +44,9 @@ public class SearchFragment extends Fragment {
             inputSearch.setHint("Search Currency...");
         }
     }
-    private void setListeners(View v){
-
-    }
+//    private void setListeners(View v){
+//
+//    }
     private void observeVM(){
         currencyVM.getInputSearchLive().observe(getViewLifecycleOwner(), query ->{
             if(query == null || query.isEmpty()){
